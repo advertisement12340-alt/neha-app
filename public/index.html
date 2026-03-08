@@ -435,14 +435,21 @@ STRICT RULES:
     const d=await r.json();
     hideTyp();
 
-    if(d.reply){
+    if(d.error){
+      toast('Error: '+d.error);
+      await say(fallback());
+    } else if(d.reply){
       if(d.saveData?.naam)saveMem({naam:d.saveData.naam});
       if(d.saveData?.info)saveMem({info:d.saveData.info});
       history.push({role:'assistant',content:d.reply});
       await say(d.reply);
+    } else {
+      toast('No reply from API');
+      await say(fallback());
     }
-  } catch {
+  } catch(err) {
     hideTyp();
+    toast('Fetch error: '+err.message);
     await say(fallback());
   }
 
